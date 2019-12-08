@@ -15,8 +15,22 @@ while msg_a_envoyer != b"end":
         msg_a_envoyer = input("Command> ")
         msg_a_envoyer = msg_a_envoyer.encode()
         connexion_avec_client.send(msg_a_envoyer)
-        msg_recu = connexion_avec_client.recv(5024)
-        print(msg_recu.decode())
+        msg_recu = connexion_avec_client.recv(10024)
+
+        
+        data=msg_recu.decode()
+        data=str(data)
+        if(data=="Error"):
+                print("An error occurred")
+        else:
+                data=data.split(";;;")
+        
+                msg=data[0]
+                try:
+                        error=data[1]
+                except:
+                        error=""
+                print(msg+'\n'+error)
         
 print("Bye")
 connexion_avec_client.close()

